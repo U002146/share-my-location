@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>分享我的位置</title>
+</head>
+<body>
+  <h2>我的即時位置</h2>
+  <p id="status">正在取得位置...</p>
+  <p id="mapLink"></p>
+  <button id="copyBtn" style="display:none;">複製位置連結</button>
+
+  <script>
+    function success(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+      document.getElementById('status').textContent = '位置取得成功：';
+      const link = document.createElement('a');
+      link.href = mapUrl;
+      link.textContent = mapUrl;
+      link.target = '_blank';
+      document.getElementById('mapLink').appendChild(link);
+
+      const copyBtn = document.getElementById('copyBtn');
+      copyBtn.style.display = 'inline-block';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(mapUrl).then(() => {
+          alert('連結已複製，可以貼給朋友了！');
+        });
+      };
+    }
+
+    function error() {
+      document.getElementById('status').textContent = '無法取得位置，請確認定位權限。';
+    }
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(success, error);
+    } else {
+      document.getElementById('status').textContent = '你的瀏覽器不支援定位功能。';
+    }
+  </script>
+</body>
+</html>
